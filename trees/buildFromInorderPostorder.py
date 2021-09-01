@@ -8,11 +8,11 @@ class Solution:
     def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
 
         # Base cases
-        if len(postorder) == 0:
+        if len(inorder) == 0:
             return None
 
-        if len(postorder) == 1:
-            return TreeNode(val=postorder.pop())
+        if len(inorder) == 1:
+            return TreeNode(val=inorder.pop())
 
 
         # Recursive cases
