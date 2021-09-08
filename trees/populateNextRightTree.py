@@ -31,3 +31,5 @@ class Solution:
             leftmost = leftmost.left
 
         return root
+
+# Copied from leet solutions
