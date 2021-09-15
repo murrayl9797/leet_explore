@@ -1,77 +1,55 @@
-"""
-# Definition for a Node.
-class Node:
-    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
-        self.val = val
-        self.left = left
-        self.right = right
-        self.next = next
-"""
-
 class Solution:
+
+    def processChild(self, childNode, prev, leftmost):
+        if childNode:
+
+            # If the "prev" pointer is alread set i.e. if we
+            # already found atleast one node on the next level,
+            # setup its next pointer
+            if prev:
+                prev.next = childNode
+            else:
+                # Else it means this child node is the first node
+                # we have encountered on the next level, so, we
+                # set the leftmost pointer
+                leftmost = childNode
+            prev = childNode
+        return prev, leftmost
+
     def connect(self, root: 'Node') -> 'Node':
 
-        # Init leftmost
+        if not root:
+            return root
+
+        # The root node is the only node on the first level
+        # and hence its the leftmost node for that level
         leftmost = root
 
-        # Go through level by level
+        # We have no idea about the structure of the tree,
+        # so, we keep going until we do find the last level.
+        # The nodes on the last level won't have any children
         while leftmost:
 
-            head = leftmost
+            # "prev" tracks the latest node on the "next" level
+            # while "curr" tracks the latest node on the current
+            # level.
+            prev, curr = None, leftmost
 
-            # While traversing one level
-            while head:
+            # We reset this so that we can re-assign it to the leftmost
+            # node of the next level. Also, if there isn't one, this
+            # would help break us out of the outermost loop.
+            leftmost = None
 
-                # Handling head.left.next
-                # Case 1 (2 children)
-                if head.left and head.right:
-                    head.left.next = head.right
+            # Iterate on the nodes in the current level using
+            # the next pointers already established.
+            while curr:
 
-                # Case 2 (1 child)
-                elif head.left and not head.right:
+                # Process both the children and update the prev
+                # and leftmost pointers as necessary.
+                prev, leftmost = self.processChild(curr.left, prev, leftmost)
+                prev, leftmost = self.processChild(curr.right, prev, leftmost)
 
-                    # Find next element for head.left.next
-                    next_node = head.next
-
-                    while next_node and not head.left.next:
-
-                        # Try both
-                        if next_node.left:
-                            head.left.next = next_node.left
-
-                        elif next_node.right:
-                            head.left.next = next_node.right
-
-                        # If none, keep moving
-                        next_node = next_node.next
-
-
-                # Handle head.right.next
-                if head.right:
-
-                    next_node = head.next
-
-                    while next_node and not head.right.next:
-
-                        # Try both
-                        if next_node.left:
-                            head.right.next = next_node.left
-
-                        elif next_node.right:
-                            head.right.next = next_node.right
-
-                        # If none, keep moving
-                        next_node = next_node.next
-
-
-
-                # Move head along
-                head = head.next
-
-            # Move to next level
-            if leftmost.left:
-                leftmost = leftmost.left
-            else:
-                leftmost = leftmost.right
+                # Move onto the next node.
+                curr = curr.next
 
         return root
